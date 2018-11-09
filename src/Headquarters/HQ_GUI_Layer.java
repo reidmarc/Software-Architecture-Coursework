@@ -1,3 +1,5 @@
+package Headquarters;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,42 +7,40 @@ import java.awt.event.ActionListener;
 
 public class HQ_GUI_Layer extends JFrame
 {
-    private static JPanel left, right;
+    private JPanel left, right;
 
-    private static String firstName;
-    private static String surName;
-    private static String dateOfBirth;
-    private static String nhsRegNo;
-    private static String street;
-    private static String cityCounty;
-    private static String postCode;
-    private static String medCon;
+    private String firstName;
+    private String surName;
+    private String dateOfBirth;
+    private String nhsRegNo;
+    private String street;
+    private String cityCounty;
+    private String postCode;
+    private String medCon;
 
-    private static JTextField firstNameTxt;
-    private static JTextField surNameTxt;
-    private static JTextField dateOfBirthTxt;
-    private static JTextField nhsRegNoTxt;
-    private static JTextField streetTxt;
-    private static JTextField cityCountyTxt;
-    private static JTextField postcodeTxt;
-    private static JTextField medConTxt;
-    private static JButton enterBtn;
+    private JTextField firstNameTxt;
+    private JTextField surNameTxt;
+    private JTextField dateOfBirthTxt;
+    private JTextField nhsRegNoTxt;
+    private JTextField streetTxt;
+    private JTextField cityCountyTxt;
+    private JTextField postcodeTxt;
+    private JTextField medConTxt;
+    private JButton enterBtn;
 
+    private HQ_APP_Layer appLayer;
 
-
-
-    public static void main(String[] args)
+    public HQ_GUI_Layer (HQ_APP_Layer appLayer)
     {
+        this.appLayer = appLayer;
+
         createWindow();
-
-
-
-
     }
 
-    private static void createWindow()
-    {
 
+
+    private void createWindow()
+    {
         //Create and set up the window.
         JFrame frame = new JFrame("GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,17 +59,14 @@ public class HQ_GUI_Layer extends JFrame
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.toFront();
-
-
-
     }
 
-    private static void leftPanelContent()
+    private void leftPanelContent()
     {
         left = new JPanel();
         left.setLayout(new GridLayout(11,1));
 
-        JLabel patientDetailsLabel = new JLabel("Patient Details");
+        JLabel patientDetailsLabel = new JLabel("Headquarters.Patient Details");
         JLabel firstNameLabel = new JLabel("First Name:");
         JLabel surNameLabel = new JLabel("Surname:");
         JLabel dateOfBirthLabel = new JLabel("Date of Birth:");
@@ -80,7 +77,6 @@ public class HQ_GUI_Layer extends JFrame
         JLabel medConLabel = new JLabel("Medical Condition:");
         JLabel blankLabel1 = new JLabel(" ");
         JLabel blankLabel2 = new JLabel(" ");
-
 
         left.add(patientDetailsLabel);
         left.add(firstNameLabel);
@@ -95,7 +91,7 @@ public class HQ_GUI_Layer extends JFrame
         left.add(blankLabel2);
     }
 
-    private static void rightPanelContent()
+    private void rightPanelContent()
     {
         right = new JPanel();
         right.setLayout(new GridLayout(11,1));
@@ -130,24 +126,26 @@ public class HQ_GUI_Layer extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("Button Pressed");
+                String result = appLayer.addPatient
+                        (
+                            firstNameTxt.getText(),
+                            surNameTxt.getText(),
+                            dateOfBirthTxt.getText(),
+                            nhsRegNoTxt.getText(),
+                            streetTxt.getText(),
+                            cityCountyTxt.getText(),
+                            postcodeTxt.getText(),
+                            medConTxt.getText()
+                        );
 
-                firstName = firstNameTxt.getText();
-                surName = surNameTxt.getText();
-                dateOfBirth = dateOfBirthTxt.getText();
-                nhsRegNo = nhsRegNoTxt.getText();
-                street = streetTxt.getText();
-                cityCounty = cityCountyTxt.getText();
-                postCode = postcodeTxt.getText();
-                medCon = medConTxt.getText();
+                popupBox(result);
 
                 clearTextFields();
-
             }
         });
     }
 
-    private static void clearTextFields()
+    private void clearTextFields()
     {
         firstNameTxt.setText("");
         surNameTxt.setText("");
@@ -157,12 +155,10 @@ public class HQ_GUI_Layer extends JFrame
         cityCountyTxt.setText("");
         postcodeTxt.setText("");
         medConTxt.setText("");
-
-        //infoBox("Data Entered", "Successful");
     }
 
-    public static void infoBox(String infoMessage, String titleBar)
+    public void popupBox(String result)
     {
-        JOptionPane.showMessageDialog(null, infoMessage, "KwikMedical: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, result, "KwikMedical", JOptionPane.INFORMATION_MESSAGE);
     }
 }
