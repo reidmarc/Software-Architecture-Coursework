@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 public class Patient implements Serializable
 {
+    static final long serialVersionUID = 1L;
+
+
     private String firstName;
     private String surName;
     private String dateOfBirth;
