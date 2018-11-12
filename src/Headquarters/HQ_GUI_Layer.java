@@ -1,5 +1,10 @@
 package Headquarters;
 
+// ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
+
+
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,6 +34,9 @@ public class HQ_GUI_Layer extends JFrame
     private JTextField medConTxt;
     private JButton clearBtn, checkBtn, addBtn, updateBtn;
     private JTextArea descriptionTxtArea;
+    private JDateChooser dateOfBirthPicker;
+
+
 
     private boolean result = false;
     private boolean addPatient = false;
@@ -118,11 +126,6 @@ public class HQ_GUI_Layer extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 resetGUI();
-                checkBtn.setEnabled(true);
-                addBtn.setEnabled(false);
-                updateBtn.setEnabled(false);
-
-
             }
         });
 
@@ -133,7 +136,7 @@ public class HQ_GUI_Layer extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 // IF All fields are empty
-                if (firstNameTxt.getText().equals("") && surNameTxt.getText().equals("") && dateOfBirthTxt.getText().equals(""))
+                if (firstNameTxt.getText().equals("") && surNameTxt.getText().equals("") && ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText().equals(""))
                 {
                     descriptionTxtArea.setText("You must enter the following fields to check if the Patient is on the database:\n\nFirst Name\nSurname\nDate of Birth\nNHS Reg No (can be blank if unknown)");
                 }
@@ -159,7 +162,8 @@ public class HQ_GUI_Layer extends JFrame
 
                             firstNameTxt.setText(patient.getFirstName());
                             surNameTxt.setText(patient.getSurName());
-                            dateOfBirthTxt.setText(patient.getDateOfBirth());
+                            ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).setText(patient.getDateOfBirth());
+                            //dateOfBirthTxt.setText(patient.getDateOfBirth()); /////////////////////////////////////////////////////////////////////
                             nhsRegNoTxt.setText("" + patient.getNhsRegNo());
                             streetTxt.setText(patient.getStreet());
                             cityCountyTxt.setText(patient.getCityCounty());
@@ -187,7 +191,8 @@ public class HQ_GUI_Layer extends JFrame
                                 (
                                         firstNameTxt.getText(),
                                         surNameTxt.getText(),
-                                        dateOfBirthTxt.getText()
+                                        ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
+                                        //dateOfBirthTxt.getText() ////////////////////////////////////////////////////////
                                 );
 
 
@@ -199,12 +204,15 @@ public class HQ_GUI_Layer extends JFrame
                                     (
                                             firstNameTxt.getText(),
                                             surNameTxt.getText(),
-                                            dateOfBirthTxt.getText()
+                                            ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
+                                            //dateOfBirthTxt.getText() ///////////////////////////////////////////////////////////////
                                     );
 
                             firstNameTxt.setText(patient.getFirstName());
                             surNameTxt.setText(patient.getSurName());
-                            dateOfBirthTxt.setText(patient.getDateOfBirth());
+
+                            ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).setText(patient.getDateOfBirth());
+                            //dateOfBirthTxt.setText(patient.getDateOfBirth()); ///////////////////////////////////////////////////////////
                             nhsRegNoTxt.setText("" + patient.getNhsRegNo());
                             streetTxt.setText(patient.getStreet());
                             cityCountyTxt.setText(patient.getCityCounty());
@@ -215,7 +223,6 @@ public class HQ_GUI_Layer extends JFrame
                             updateBtn.setEnabled(true);
                             medConTxt.setEditable(true);
 
-
                         }
                         else
                         {
@@ -223,20 +230,11 @@ public class HQ_GUI_Layer extends JFrame
                             nhsRegNoTxt.setEditable(false);
                             addBtn.setEnabled(true);
                             medConTxt.setEditable(true);
-
-
                         }
-
                     }
                 }
-
             }
         });
-
-
-
-
-
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
@@ -248,7 +246,10 @@ public class HQ_GUI_Layer extends JFrame
         JLabel blankLabel1 = new JLabel(" ");
         firstNameTxt = new JTextField();
         surNameTxt = new JTextField();
-        dateOfBirthTxt = new JTextField();
+
+        dateOfBirthPicker = new JDateChooser();
+        dateOfBirthPicker.setDateFormatString("yyyy-MM-dd");
+
         nhsRegNoTxt = new JTextField();
         streetTxt = new JTextField();
         cityCountyTxt = new JTextField();
@@ -261,7 +262,7 @@ public class HQ_GUI_Layer extends JFrame
         right.add(blankLabel1);
         right.add(firstNameTxt);
         right.add(surNameTxt);
-        right.add(dateOfBirthTxt);
+        right.add(dateOfBirthPicker);
         right.add(nhsRegNoTxt);
         right.add(streetTxt);
         right.add(cityCountyTxt);
@@ -328,7 +329,7 @@ public class HQ_GUI_Layer extends JFrame
     {
         firstNameTxt.setText("");
         surNameTxt.setText("");
-        dateOfBirthTxt.setText("");
+        ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).setText("");
         nhsRegNoTxt.setText("");
         streetTxt.setText("");
         cityCountyTxt.setText("");
@@ -339,12 +340,17 @@ public class HQ_GUI_Layer extends JFrame
 
         firstNameTxt.setEditable(true);
         surNameTxt.setEditable(true);
-        dateOfBirthTxt.setEditable(true);
+        //dateOfBirthTxt.setEditable(true);
         nhsRegNoTxt.setEditable(true);
         streetTxt.setEditable(true);
         cityCountyTxt.setEditable(true);
         postcodeTxt.setEditable(true);
         medConTxt.setEditable(false);
+
+
+        checkBtn.setEnabled(true);
+        addBtn.setEnabled(false);
+        updateBtn.setEnabled(false);
 
         descriptionTxtArea.setText("Please enter the Patients details.\nYou must enter the following fields to check if the Patient is on the database:\n\nFirst Name\nSurname\nDate of Birth\nNHS Reg No ");
 

@@ -9,7 +9,7 @@ public interface HQ_APP_Layer_Interface
 
     boolean checkForPatient(int nhsRegNo);
 
-    String updatePatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode);
+    String updatePatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon);
 
     Patient retrievePatientDetails(String firstName, String surName, String dateOfBirth);
 

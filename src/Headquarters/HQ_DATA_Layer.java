@@ -17,7 +17,7 @@ public class HQ_DATA_Layer implements Database_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public boolean addPatient(Patient patient)  throws RemoteException
+    public boolean addPatient(Patient patient) throws RemoteException
     {
         try
         {

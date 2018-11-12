@@ -109,7 +109,7 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public String updatePatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode)
+    public String updatePatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
     {
         return null;
     }
