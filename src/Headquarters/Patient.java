@@ -10,15 +10,23 @@ public class Patient implements Serializable
     private String firstName;
     private String surName;
     private String dateOfBirth;
-    private String nhsRegNo;
+    private int nhsRegNo;
     private String street;
     private String cityCounty;
     private String postCode;
     private String medCon;
 
+    Patient()
+    {
 
+    }
 
-    Patient(String firstName, String surName, String dateOfBirth, String nhsRegNo, String street, String cityCounty, String postCode, String medCon)
+    Patient(int nhsRegNo)
+    {
+        this.nhsRegNo = nhsRegNo;
+    }
+
+    Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
     {
         this.firstName = firstName;
         this.surName = surName;
@@ -28,6 +36,13 @@ public class Patient implements Serializable
         this.cityCounty = cityCounty;
         this.postCode = postCode;
         this.medCon = medCon;
+    }
+
+    Patient(String firstName, String surName, String dateOfBirth)
+    {
+        this.firstName = firstName;
+        this.surName = surName;
+        this.dateOfBirth = dateOfBirth;
     }
 
 
@@ -62,12 +77,12 @@ public class Patient implements Serializable
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getNhsRegNo()
+    public int getNhsRegNo()
     {
         return nhsRegNo;
     }
 
-    public void setNhsRegNo(String nhsRegNo)
+    public void setNhsRegNo(int nhsRegNo)
     {
         this.nhsRegNo = nhsRegNo;
     }
@@ -124,4 +139,6 @@ public class Patient implements Serializable
                 "\"postCode\" : \"" + postCode + "\", " +
                 "\"medCon\" : \"" + medCon + "\" }";
     }
+
+
 }
