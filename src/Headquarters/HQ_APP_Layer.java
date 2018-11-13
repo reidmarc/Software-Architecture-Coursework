@@ -17,11 +17,11 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public String addPatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
+    public String addPatient(String firstName, String surName, String dateOfBirth,  String street, String cityCounty, String postCode, String medCon)
     {
 
         // Creates the Headquarters.Patient object
-        Patient patient = new Patient(firstName, surName, dateOfBirth, nhsRegNo, street, cityCounty, postCode, medCon);
+        Patient patient = new Patient(firstName, surName, dateOfBirth, street, cityCounty, postCode, medCon);
 
         try
         {
@@ -111,7 +111,29 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     @Override
     public String updatePatient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
     {
-        return null;
+        // Creates the Headquarters.Patient object
+        Patient patient = new Patient(firstName, surName, dateOfBirth, nhsRegNo, street, cityCounty, postCode, medCon);
+
+        try
+        {
+            successful = dataLayer.updatePatient(patient);
+        }
+        catch (RemoteException ex)
+        {
+            remoteEx(ex);
+            successful = false;
+        }
+
+
+        // Either the record was added or not.  Return an appropriate message
+        if (successful)
+        {
+            return "Patient: " + firstName + " " + surName + " details updated on the database.";
+        }
+        else
+        {
+            return "Failed to update Patient: " + firstName + " " + surName + " details.";
+        }
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------

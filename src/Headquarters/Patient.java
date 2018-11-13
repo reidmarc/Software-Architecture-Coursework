@@ -38,6 +38,17 @@ public class Patient implements Serializable
         this.medCon = medCon;
     }
 
+    Patient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
+    {
+        this.firstName = firstName;
+        this.surName = surName;
+        this.dateOfBirth = dateOfBirth;
+        this.street = street;
+        this.cityCounty = cityCounty;
+        this.postCode = postCode;
+        this.medCon = medCon;
+    }
+
     Patient(String firstName, String surName, String dateOfBirth)
     {
         this.firstName = firstName;

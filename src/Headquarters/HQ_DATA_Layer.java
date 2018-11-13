@@ -40,12 +40,35 @@ public class HQ_DATA_Layer implements Database_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public boolean checkForPatient(Patient patient) throws RemoteException
+    public boolean updatePatient(Patient patient) throws RemoteException
     {
         try
         {
             // Get the registry from the server (null = local host)
             Registry registry = LocateRegistry.getRegistry(null);
+
+            // Look up the remote object
+            Database_Interface stub = (Database_Interface) registry.lookup("Database");
+
+            // Returns boolean value, whether the data was inserted to the db or not
+            return stub.updatePatient(patient);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("RMI ERROR: " + ex);
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean checkForPatient(Patient patient) throws RemoteException
+    {
+        try
+        {
+            // Get the registry from the server (null = local host)
+            Registry registry = LocateRegistry.getRegistry(1099);
 
 
             // Look up the remote object
@@ -69,7 +92,7 @@ public class HQ_DATA_Layer implements Database_Interface
         try
         {
             // Get the registry from the server (null = local host)
-            Registry registry = LocateRegistry.getRegistry(null);
+            Registry registry = LocateRegistry.getRegistry(1099);
 
             // Look up the remote object
             Database_Interface stub = (Database_Interface) registry.lookup("Database");
