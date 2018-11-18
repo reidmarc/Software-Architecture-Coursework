@@ -17,7 +17,7 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public String addPatient(String firstName, String surName, String dateOfBirth,  String street, String cityCounty, String postCode, String medCon)
+    public String addPatient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
     {
 
         // Creates the Headquarters.Patient object
@@ -43,6 +43,23 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
         {
             return "Failed to add Patient: " + firstName + " " + surName + ".";
         }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean sendRescueRequest(int nhsRegNo)
+    {
+        try
+        {
+            return dataLayer.sendRescueRequest(nhsRegNo);
+        }
+        catch (RemoteException ex)
+        {
+            remoteEx(ex);
+        }
+
+
+        return false;
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ public class HQ_GUI_Layer extends JFrame
 
     private JTextField firstNameTxt;
     private JTextField surNameTxt;
-    private JTextField dateOfBirthTxt;
+    //private JTextField dateOfBirthTxt;
     private JTextField nhsRegNoTxt;
     private JTextField streetTxt;
     private JTextField cityCountyTxt;
@@ -61,7 +61,7 @@ public class HQ_GUI_Layer extends JFrame
         UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("Arial", Font.PLAIN, 12));
 
         //Create and set up the window.
-        JFrame frame = new JFrame("GUI");
+        JFrame frame = new JFrame("HQ GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame.setLayout(new GridLayout(2,1, 10, 10));
         frame.setLayout(new FlowLayout());
@@ -321,8 +321,23 @@ public class HQ_GUI_Layer extends JFrame
                         medConTxt.getText()
                 );
 
-                resetGUI();
                 popupBox(result);
+
+                if (appLayer.sendRescueRequest
+                        (
+                                Integer.parseInt(nhsRegNoTxt.getText())
+                        ))
+                {
+                    popupBox("Rescue Request Sent");
+                }
+                else
+                {
+                    popupBox("Rescue Request NOT Sent");
+                }
+
+
+
+                resetGUI();
 
             }
         });
@@ -350,10 +365,24 @@ public class HQ_GUI_Layer extends JFrame
                                 medConTxt.getText()
                         );
 
-                resetGUI();
                 popupBox(result);
 
+                if (appLayer.sendRescueRequest
+                        (
+                            Integer.parseInt(nhsRegNoTxt.getText())
+                        ))
+                {
+                    popupBox("Rescue Request Sent");
+                }
+                else
+                {
+                    popupBox("Rescue Request NOT Sent");
+                }
 
+
+
+
+                resetGUI();
 
             }
         });

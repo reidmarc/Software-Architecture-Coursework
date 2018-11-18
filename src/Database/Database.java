@@ -1,5 +1,6 @@
 package Database;
 
+import Headquarters.IncidentReport;
 import Headquarters.Patient;
 
 import java.rmi.RemoteException;
@@ -8,12 +9,16 @@ import java.sql.*;
 public class Database implements Database_Interface
 {
     private Connection conn;
+    //private boolean newPatient = false;
+
 
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean addPatient(Patient patient) throws RemoteException
     {
+        int nhsRegNo;
+
         try
         {
             // Load the driver
@@ -22,22 +27,51 @@ public class Database implements Database_Interface
             // First we need to establish a connection to the database
             this.conn = DriverManager.getConnection("jdbc:mysql://localhost/patients?user=NotJava&password=NotJava");
 
-            // Create a new SQL statement
-            Statement statement = conn.createStatement();
 
-            // Build the INSERT statement
-            String update = "INSERT INTO PatientRecord (firstName, surName, dateOfBirth, street, cityCounty, postcode) " + "VALUES ('" + patient.getFirstName() + "', '" + patient.getSurName() + "', '" + patient.getDateOfBirth()  + "','" + patient.getStreet()  + "','" + patient.getCityCounty()  + "','" + patient.getPostCode()  + "')";
+            PreparedStatement patientTableInsert = conn.prepareStatement("INSERT INTO PatientRecord (firstName, surName, dateOfBirth, street, cityCounty, postcode) VALUES (?,?,?,?,?,?)");
+            {
+                patientTableInsert.setString(1, patient.getFirstName());
+                patientTableInsert.setString(2, patient.getSurName());
+                patientTableInsert.setString(3, patient.getDateOfBirth());
+                patientTableInsert.setString(4, patient.getStreet());
+                patientTableInsert.setString(5, patient.getCityCounty());
+                patientTableInsert.setString(6, patient.getPostCode());
+                patientTableInsert.executeUpdate();
+            }
+
+
+            // Create a new SQL statement
+            Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            // Build the Query
+            String exists = patientQueryCheck(patient);
 
             // Execute the statement
-            statement.executeUpdate(update);
+            ResultSet result = statement.executeQuery(exists);
 
-            // Release resources held by the statement
-            statement.close();
+            if (result.isBeforeFirst())
+            {
+                // We will update the first hit (there should be only one)
+                result.first();
 
-            // Release resources held by the connection.  This also ensures that the INSERT completes
-            conn.close();
+
+                nhsRegNo = result.getInt(4);
+            }
+            else
+            {
+                return false;
+            }
+
+            PreparedStatement incidentTableInsert = conn.prepareStatement("INSERT INTO IncidentReport (nhsRegNoRef, medCon) VALUES (?,?)");
+            {
+                incidentTableInsert.setInt(1, nhsRegNo);
+                incidentTableInsert.setString(2, patient.getMedCon());
+                incidentTableInsert.executeUpdate();
+            }
 
             System.out.println("Patient: " + patient.getFirstName() + " " + patient.getSurName() + " added to the DB.");
+
+            //newPatient = true;
             return true;
 
         }
@@ -110,39 +144,12 @@ public class Database implements Database_Interface
             // Release resources held by the statement
             statement.close();
 
-
-            /*
-            // Create a new SQL statement
-            Statement statement2 = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
-
-            // Build the Query
-            String exists2 = "SELECT * FROM IncidentReport WHERE nhsRegNo = '" + patient.getNhsRegNo() + "'";
-
-            // Execute the statement
-            ResultSet result2 = statement.executeQuery(exists);
-
-            if (result2.isBeforeFirst())
+            PreparedStatement incidentTableInsert = conn.prepareStatement("INSERT INTO IncidentReport (nhsRegNoRef, medCon) VALUES (?,?)");
             {
-
-                // We will update the first hit (there should be only one)
-                result2.first();
-
-                String medCon = patient.getMedCon();
-
-                // Update the relevant columns in the DB
-                result2.updateString("medCon", medCon);
-
-                // Update the row in the DB
-                result2.updateRow();
+                incidentTableInsert.setInt(1, patient.getNhsRegNo());
+                incidentTableInsert.setString(2, patient.getMedCon());
+                incidentTableInsert.executeUpdate();
             }
-            else
-            {
-                return false;
-            }
-
-            // Release resources held by the statement
-            statement2.close();
-            */
 
             // Release resources held by the connection.  This also ensures that the INSERT completes
             conn.close();
@@ -181,20 +188,7 @@ public class Database implements Database_Interface
             // Create a new SQL statement
             Statement statementExist = conn.createStatement();
 
-
-            if (patient.getNhsRegNo() > 0)
-            {
-                exists = "SELECT * FROM PatientRecord WHERE nhsRegNo = '" + patient.getNhsRegNo() + "'";
-            }
-            else if (patient.getFirstName() != null && patient.getSurName() != null && patient.getDateOfBirth() != null)
-            {
-                // Build the Query
-                exists = "SELECT * FROM PatientRecord WHERE firstName = '" + patient.getFirstName() + "' AND surName = '" + patient.getSurName() + "' AND dateOfBirth = '" + patient.getDateOfBirth() + "'";
-            }
-            else
-            {
-                return theResult;
-            }
+            exists = patientQueryCheck(patient);
 
             // Execute the statement
             ResultSet result = statementExist.executeQuery(exists);
@@ -238,20 +232,7 @@ public class Database implements Database_Interface
             // Build the Query
             //String exists = "SELECT * FROM PatientRecord WHERE firstName = '" + patient.getFirstName() + "' AND surName = '" + patient.getSurName() + "' AND dateOfBirth = '" + patient.getDateOfBirth() + "'";
 
-
-            if (patient.getNhsRegNo() > 0)
-            {
-                query = "SELECT * FROM PatientRecord WHERE nhsRegNo = '" + patient.getNhsRegNo() + "'";
-            }
-            else if (patient.getFirstName() != null && patient.getSurName() != null && patient.getDateOfBirth() != null)
-            {
-                // Build the Query
-                query = "SELECT * FROM PatientRecord WHERE firstName = '" + patient.getFirstName() + "' AND surName = '" + patient.getSurName() + "' AND dateOfBirth = '" + patient.getDateOfBirth() + "'";
-            }
-            else
-            {
-                return patient;
-            }
+            query = patientQueryCheck(patient);
 
             // Execute the statement
             ResultSet result = statementExist.executeQuery(query);
@@ -282,48 +263,69 @@ public class Database implements Database_Interface
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
+    @Override
+    public IncidentReport retrieveIncidentDetails(IncidentReport incidentReport) throws RemoteException
+    {
+
+        try
+        {
+            // Load the driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // First we need to establish a connection to the database
+            this.conn = DriverManager.getConnection("jdbc:mysql://localhost/patients?user=NotJava&password=NotJava");
+
+            // Create a new SQL statement
+            Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            // Build the Query
+            String exists = "SELECT * FROM Incidentreport WHERE nhsRegNoRef = '" + incidentReport.getNhsRegNoRef() + "'";
+
+            // Execute the statement
+            ResultSet result = statement.executeQuery(exists);
+
+            if (result.isBeforeFirst())
+            {
+                result.last();
+
+                incidentReport.setIncidentReportNo(result.getInt("reportNo"));
+                incidentReport.setMedCon(result.getString("medCon"));
+            }
+
+            // Release resources held by the connection.  This also ensures that the INSERT completes
+            conn.close();
 
 
+        }
+        catch (ClassNotFoundException ex)
+        {
+            classNotFoundEx(ex);
+        }
+        catch (SQLException ex)
+        {
+            sqlEx(ex);
+        }
+        return incidentReport;
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    public String patientQueryCheck(Patient patient)
+    {
+        String query = "";
 
+        if (patient.getNhsRegNo() > 0)
+        {
+            query = "SELECT * FROM PatientRecord WHERE nhsRegNo = '" + patient.getNhsRegNo() + "'";
+        }
 
+        if (patient.getFirstName() != null && patient.getSurName() != null && patient.getDateOfBirth() != null)
+        {
+            // Build the Query
+            query = "SELECT * FROM PatientRecord WHERE firstName = '" + patient.getFirstName() + "' AND surName = '" + patient.getSurName() + "' AND dateOfBirth = '" + patient.getDateOfBirth() + "'";
+        }
 
-
-/*
-while (result.next())
-                {
-                    String firstName = result.getString("firstName");
-                    String surName = result.getString("surName");
-                    String dateOfBirth = result.getString("dateOfBirth");
-                    String nhsRegNo = result.getString("nhsRegNo");
-                    String street = result.getString("street");
-                    String cityCounty = result.getString("cityCounty");
-                    String postcode = result.getString("postcode");
-                }
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return query;
+    }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     private void classNotFoundEx(ClassNotFoundException ex)

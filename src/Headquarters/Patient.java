@@ -6,7 +6,6 @@ public class Patient implements Serializable
 {
     static final long serialVersionUID = 1L;
 
-
     private String firstName;
     private String surName;
     private String dateOfBirth;
@@ -16,17 +15,17 @@ public class Patient implements Serializable
     private String postCode;
     private String medCon;
 
-    Patient()
+    public Patient()
     {
 
     }
 
-    Patient(int nhsRegNo)
+    public Patient(int nhsRegNo)
     {
         this.nhsRegNo = nhsRegNo;
     }
 
-    Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
+    public Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
     {
         this.firstName = firstName;
         this.surName = surName;
@@ -38,7 +37,7 @@ public class Patient implements Serializable
         this.medCon = medCon;
     }
 
-    Patient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
+    public Patient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
     {
         this.firstName = firstName;
         this.surName = surName;
@@ -49,14 +48,16 @@ public class Patient implements Serializable
         this.medCon = medCon;
     }
 
-    Patient(String firstName, String surName, String dateOfBirth)
+    public Patient(String firstName, String surName, String dateOfBirth)
     {
         this.firstName = firstName;
         this.surName = surName;
         this.dateOfBirth = dateOfBirth;
     }
 
-
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public String getFirstName()
     {

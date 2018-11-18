@@ -2,12 +2,17 @@ package Headquarters;
 
 
 import Database.Database_Interface;
+
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 
-public class HQ_DATA_Layer implements Database_Interface
+public class HQ_DATA_Layer implements HQ_DATA_Layer_Interface
 {
     // Default Constructor
     public HQ_DATA_Layer()
@@ -34,6 +39,49 @@ public class HQ_DATA_Layer implements Database_Interface
         {
             System.out.println("RMI ERROR: " + ex);
             ex.printStackTrace();
+            return false;
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean sendRescueRequest(int nhsRegNo) throws RemoteException
+    {
+        Socket s = null;
+
+        try
+        {
+            //if (patient.getPostCode().contains("EH") ----send to different port depending on the postcode
+
+            int serverPort = 7896;
+            s = new Socket("127.0.0.1", serverPort);
+
+            DataInputStream in = new DataInputStream( s.getInputStream());
+            DataOutputStream out = new DataOutputStream( s.getOutputStream());
+
+            //ObjectInputStream in = new ObjectInputStream( s.getInputStream());
+            //ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
+            //out.writeUTF("" + nhsRegNo); // UTF is a string encoding format
+            out.writeInt(nhsRegNo);
+
+            String data = in.readUTF();
+
+            s.close();
+
+            if (data != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error:"+e.getMessage());
             return false;
         }
     }
@@ -107,6 +155,4 @@ public class HQ_DATA_Layer implements Database_Interface
             return null;
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
 }

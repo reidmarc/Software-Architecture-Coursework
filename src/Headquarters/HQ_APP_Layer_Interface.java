@@ -1,5 +1,7 @@
 package Headquarters;
 
+import java.rmi.RemoteException;
+
 public interface HQ_APP_Layer_Interface
 {
 
@@ -14,5 +16,7 @@ public interface HQ_APP_Layer_Interface
     Patient retrievePatientDetails(String firstName, String surName, String dateOfBirth);
 
     Patient retrievePatientDetails(int nhsRegNo);
+
+    boolean sendRescueRequest(int nhsRegNo);
 
 }

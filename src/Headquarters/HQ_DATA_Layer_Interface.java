@@ -1,12 +1,9 @@
-package Database;
-
-import Headquarters.IncidentReport;
-import Headquarters.Patient;
+package Headquarters;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface Database_Interface extends Remote
+public interface HQ_DATA_Layer_Interface extends Remote
 {
     boolean addPatient(Patient patient) throws RemoteException;
 
@@ -16,7 +13,6 @@ public interface Database_Interface extends Remote
 
     Patient retrievePatientDetails(Patient patient) throws RemoteException;
 
-    IncidentReport retrieveIncidentDetails(IncidentReport incidentReport) throws RemoteException;
-
+    boolean sendRescueRequest(int nhsRegNo) throws RemoteException;
 
 }
