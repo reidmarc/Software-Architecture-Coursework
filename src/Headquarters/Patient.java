@@ -25,7 +25,14 @@ public class Patient implements Serializable
         this.nhsRegNo = nhsRegNo;
     }
 
-    public Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
+    public Patient(String firstName, String surName, String dateOfBirth)
+    {
+        this.firstName = firstName;
+        this.surName = surName;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode)
     {
         this.firstName = firstName;
         this.surName = surName;
@@ -34,7 +41,6 @@ public class Patient implements Serializable
         this.street = street;
         this.cityCounty = cityCounty;
         this.postCode = postCode;
-        this.medCon = medCon;
     }
 
     public Patient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
@@ -48,12 +54,23 @@ public class Patient implements Serializable
         this.medCon = medCon;
     }
 
-    public Patient(String firstName, String surName, String dateOfBirth)
+    public Patient(String firstName, String surName, String dateOfBirth, int nhsRegNo, String street, String cityCounty, String postCode, String medCon)
     {
         this.firstName = firstName;
         this.surName = surName;
         this.dateOfBirth = dateOfBirth;
+        this.nhsRegNo = nhsRegNo;
+        this.street = street;
+        this.cityCounty = cityCounty;
+        this.postCode = postCode;
+        this.medCon = medCon;
     }
+
+
+
+
+
+
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

@@ -1,13 +1,7 @@
-package Regional_Hospital;
-
-
-
-import Headquarters.PatientAndIncidentReport;
-import Headquarters.Patient;
+package Mobile_Phone;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
@@ -15,8 +9,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Duration;
+import java.time.LocalTime;
 
-public class RH_GUI_Layer implements Runnable
+public class MP_GUI_Layer implements Runnable
 {
     private JPanel outerPanel, innerLeftPanel, innerRightPanel;
     private JTextField firstNameTxt;
@@ -33,39 +29,40 @@ public class RH_GUI_Layer implements Runnable
     private JTextField currentDateTxt;
     private JTextField locationTxt;
     private JTextField actionTakenTxt;
-
-
-    private JButton sendDetailsBtn, forwardsBtn, backwardsBtn;
+    private JTextField startTimeTxt;
 
 
 
 
-    private RH_APP_Layer appLayer;
+    private JButton sendDetailsBtn;
+
+    private MP_APP_Layer appLayer;
 
 
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
-    public RH_GUI_Layer (RH_APP_Layer appLayer)
+    public MP_GUI_Layer (MP_APP_Layer appLayer)
     {
         this.appLayer = appLayer;
-
         createWindow();
         run();
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
+
+    @Override
     public void run()
     {
         try
         {
-            int serverPort = 7896;
+            int serverPort = 7898;
             ServerSocket listenSocket = new ServerSocket(serverPort);
             System.out.println("Server ready");
 
             while(true)
             {
                 Socket clientSocket = listenSocket.accept();
-                RH_Connection c = new RH_Connection(clientSocket, nhsRegNoTxt);
+                MP_Connection c = new MP_Connection(clientSocket, firstNameTxt, surNameTxt, dateOfBirthTxt, nhsRegNoTxt, streetTxt, cityCountyTxt, postcodeTxt, reportNoTxt, medConTxt, currentDateTxt, startTimeTxt);
             }
         }
         catch(IOException e)
@@ -73,16 +70,14 @@ public class RH_GUI_Layer implements Runnable
             System.out.println("Listen: " + e.getMessage());
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+
     private void createWindow()
     {
         UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("Arial", Font.PLAIN, 12));
 
         //Create and set up the window.
-        JFrame frame = new JFrame("Regional Hospital GUI");
+        JFrame frame = new JFrame("Ambulance GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setLayout(new GridLayout(2,1, 10, 10));
         frame.setLayout(new GridLayout(1,2));
         frame.setResizable(false);
 
@@ -92,9 +87,7 @@ public class RH_GUI_Layer implements Runnable
 
         outerPanel.add(innerLeftPanel);
         outerPanel.add(innerRightPanel);
-
         frame.add(outerPanel);
-
 
         //Display the window
         frame.setLocationRelativeTo(null);
@@ -102,11 +95,8 @@ public class RH_GUI_Layer implements Runnable
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.toFront();
-
-
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+
     private void innerLeftPanelContent()
     {
         innerLeftPanel = new JPanel();
@@ -116,7 +106,7 @@ public class RH_GUI_Layer implements Runnable
         JLabel blankLabel1 = new JLabel(" ");
         JLabel blankLabel2 = new JLabel(" ");
         JLabel blankLabel3 = new JLabel(" ");
-        JLabel blankLabel4 = new JLabel(" ");
+
 
 
         JLabel patientDetailsLabel = new JLabel("    Patient Details");
@@ -137,6 +127,7 @@ public class RH_GUI_Layer implements Runnable
         streetTxt = new JTextField();
         cityCountyTxt = new JTextField();
         postcodeTxt = new JTextField();
+        startTimeTxt = new JTextField();
         sendDetailsBtn = new JButton("Send Details");
 
 
@@ -147,6 +138,8 @@ public class RH_GUI_Layer implements Runnable
         streetTxt.setEditable(false);
         cityCountyTxt.setEditable(false);
         postcodeTxt.setEditable(false);
+        startTimeTxt.setVisible(false);
+
 
         innerLeftPanel.add(patientDetailsLabel);
         innerLeftPanel.add(blankLabel1);
@@ -165,43 +158,11 @@ public class RH_GUI_Layer implements Runnable
         innerLeftPanel.add(postcodeLabel);
         innerLeftPanel.add(postcodeTxt);
         innerLeftPanel.add(blankLabel2);
-        innerLeftPanel.add(blankLabel3);
+        innerLeftPanel.add(startTimeTxt);
 
         innerLeftPanel.add(sendDetailsBtn);
-        innerLeftPanel.add(blankLabel4);
+        innerLeftPanel.add(blankLabel3);
 
-
-        nhsRegNoTxt.getDocument().addDocumentListener(new DocumentListener()
-        {
-            @Override
-            public void insertUpdate(DocumentEvent e)
-            {
-                Patient patient = appLayer.retrievePatientDetails(Integer.parseInt(nhsRegNoTxt.getText()));
-
-                firstNameTxt.setText(patient.getFirstName());
-                surNameTxt.setText(patient.getSurName());
-                dateOfBirthTxt.setText(patient.getDateOfBirth());
-                streetTxt.setText(patient.getStreet());
-                cityCountyTxt.setText(patient.getCityCounty());
-                postcodeTxt.setText(patient.getPostCode());
-
-
-                PatientAndIncidentReport patientAndIncidentReport = appLayer.retrieveIncidentDetails(Integer.parseInt(nhsRegNoTxt.getText()));
-
-                reportNoTxt.setText("" + patientAndIncidentReport.getIncidentReportNo());
-                medConTxt.setText(patientAndIncidentReport.getMedCon());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e)
-            {
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e)
-            {
-            }
-        });
 
 
         sendDetailsBtn.addActionListener(new ActionListener()
@@ -209,34 +170,50 @@ public class RH_GUI_Layer implements Runnable
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                long startTime = Long.parseLong(startTimeTxt.getText());
 
-                if (appLayer.sendPatientDetailsToMobile
+                Timing timing = new Timing();
+                long duration = timing.endTiming(startTime);
+
+                System.out.println("Duration: " + duration + " seconds");
+
+
+
+                // WHAT DOES THE BUTTON DO?????
+
+                boolean isUpdated = appLayer.patientAndIncidentReportUpdated
                         (
-                                firstNameTxt.getText(),
-                                surNameTxt.getText(),
-                                dateOfBirthTxt.getText(),
-                                Integer.parseInt(nhsRegNoTxt.getText()),
-                                streetTxt.getText(),
-                                cityCountyTxt.getText(),
-                                postcodeTxt.getText(),
-                                Integer.parseInt(reportNoTxt.getText()),
-                                medConTxt.getText()
-                        ))
-                {
-                    System.out.println("Patient Details sent to mobile\nNow send the incident details");
+                            firstNameTxt.getText(),
+                            surNameTxt.getText(),
+                            dateOfBirthTxt.getText(),
+                            Integer.parseInt(nhsRegNoTxt.getText()),
+                            streetTxt.getText(),
+                            cityCountyTxt.getText(),
+                            postcodeTxt.getText(),
+                            Integer.parseInt(reportNoTxt.getText()),
+                            medConTxt.getText(),
+                            responderTxt.getText(),
+                            diagnosisTxt.getText(),
+                            currentDateTxt.getText(),
+                            locationTxt.getText(),
+                            actionTakenTxt.getText(),
+                            duration
+                        );
 
+                if (isUpdated)
+                {
+                    System.out.println("Success");
                 }
                 else
                 {
-                    System.out.println("Patient Details NOT sent!!\nGet working!!");
+                    System.out.println("BAAAAAAAD");
                 }
 
                 resetGUI();
             }
         });
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+
     private void resetGUI()
     {
         firstNameTxt.setText("");
@@ -253,9 +230,10 @@ public class RH_GUI_Layer implements Runnable
         currentDateTxt.setText("");
         locationTxt.setText("");
         actionTakenTxt.setText("");
+        startTimeTxt.setText("");
+
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+
     private void innerRightPanelContent()
     {
         innerRightPanel = new JPanel();
@@ -274,6 +252,7 @@ public class RH_GUI_Layer implements Runnable
         JLabel locationLabel = new JLabel("    Location: ");
         JLabel actionTakenLabel = new JLabel("    Action Taken: ");
 
+
         reportNoTxt = new JTextField();
         medConTxt = new JTextField();
         responderTxt = new JTextField();
@@ -281,16 +260,12 @@ public class RH_GUI_Layer implements Runnable
         currentDateTxt = new JTextField();
         locationTxt = new JTextField();
         actionTakenTxt = new JTextField();
-        backwardsBtn = new JButton("<<<");
-        forwardsBtn = new JButton(">>>");
+
 
         reportNoTxt.setEditable(false);
         medConTxt.setEditable(false);
-        responderTxt.setEditable(false);
-        diagnosisTxt.setEditable(false);
         currentDateTxt.setEditable(false);
-        locationTxt.setEditable(false);
-        actionTakenTxt.setEditable(false);
+
 
         innerRightPanel.add(incidentDetailsLabels);
         innerRightPanel.add(blankLabel1);
@@ -310,11 +285,12 @@ public class RH_GUI_Layer implements Runnable
         innerRightPanel.add(actionTakenTxt);
         innerRightPanel.add(blankLabel2);
         innerRightPanel.add(blankLabel3);
-        innerRightPanel.add(backwardsBtn);
-        innerRightPanel.add(forwardsBtn);
+
+
+
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
+
+
     private void outerPanelContent()
     {
         outerPanel = new JPanel();

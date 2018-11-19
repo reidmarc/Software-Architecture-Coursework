@@ -6,14 +6,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-class Connection extends Thread
+class RH_Connection extends Thread
 {
     DataInputStream in;
     DataOutputStream out;
     Socket clientSocket;
     JTextField nhsRegNoTxt;
 
-    public Connection (Socket aClientSocket, JTextField nhsRegNoTxt)
+    public RH_Connection(Socket aClientSocket, JTextField nhsRegNoTxt)
     {
         try
         {
@@ -26,7 +26,7 @@ class Connection extends Thread
         }
         catch(IOException e)
         {
-            System.out.println("Connection: " + e.getMessage());
+            System.out.println("RH_Connection: " + e.getMessage());
             e.printStackTrace();
         }
     }

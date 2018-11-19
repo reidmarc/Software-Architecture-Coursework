@@ -1,6 +1,6 @@
 package Database;
 
-import Headquarters.IncidentReport;
+import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
 
 import java.rmi.Remote;
@@ -16,7 +16,9 @@ public interface Database_Interface extends Remote
 
     Patient retrievePatientDetails(Patient patient) throws RemoteException;
 
-    IncidentReport retrieveIncidentDetails(IncidentReport incidentReport) throws RemoteException;
+    PatientAndIncidentReport retrieveIncidentDetails(PatientAndIncidentReport patientAndIncidentReport) throws RemoteException;
+
+    boolean updatePatientAndIncidentReport(PatientAndIncidentReport patientAndIncidentReport) throws RemoteException;
 
 
 }

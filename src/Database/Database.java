@@ -1,6 +1,6 @@
 package Database;
 
-import Headquarters.IncidentReport;
+import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
 
 import java.rmi.RemoteException;
@@ -172,6 +172,74 @@ public class Database implements Database_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
+    public boolean updatePatientAndIncidentReport(PatientAndIncidentReport patientAndIncidentReport) throws RemoteException
+    {
+        String query;
+
+        try
+        {
+            // Load the driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // First we need to establish a connection to the database
+            this.conn = DriverManager.getConnection("jdbc:mysql://localhost/patients?user=NotJava&password=NotJava");
+
+            // Create a new SQL statement
+            Statement statementIncident = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            // Build the Query
+            query = "SELECT * FROM IncidentReport WHERE reportNo = '" + patientAndIncidentReport.getIncidentReportNo() + "'";
+
+            // Execute the statement
+            ResultSet resultIncident = statementIncident.executeQuery(query);
+
+            if (resultIncident.isBeforeFirst())
+            {
+                resultIncident.first();
+
+                String responder = patientAndIncidentReport.getResponder();
+                String diagnosis = patientAndIncidentReport.getDiagnosis();
+                String date = patientAndIncidentReport.getDate();
+                String location = patientAndIncidentReport.getLocation();
+                String actionTaken = patientAndIncidentReport.getActionTaken();
+                long responseDuration = patientAndIncidentReport.getResponseDuration();
+
+                resultIncident.updateString("responder", responder);
+                resultIncident.updateString("diagnosis", diagnosis);
+                resultIncident.updateString("date", date);
+                resultIncident.updateString("location", location);
+                resultIncident.updateString("actionTaken", actionTaken);
+                resultIncident.updateLong("responseDuration", responseDuration);
+
+                // Update the row in the DB
+                resultIncident.updateRow();
+            }
+            else
+            {
+                return false;
+            }
+
+            // Release resources held by the connection.  This also ensures that the INSERT completes
+            conn.close();
+
+            System.out.println("Patient: " + patientAndIncidentReport.getFirstName() + " " + patientAndIncidentReport.getSurName() + " - Report No: " + patientAndIncidentReport.getIncidentReportNo() + " updated on the DB.");
+            return true;
+
+        }
+        catch (ClassNotFoundException ex)
+        {
+            classNotFoundEx(ex);
+            return false;
+        }
+        catch (SQLException ex)
+        {
+            sqlEx(ex);
+            return false;
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Override
     public boolean checkForPatient(Patient patient) throws RemoteException
     {
         String exists = "";
@@ -264,7 +332,7 @@ public class Database implements Database_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public IncidentReport retrieveIncidentDetails(IncidentReport incidentReport) throws RemoteException
+    public PatientAndIncidentReport retrieveIncidentDetails(PatientAndIncidentReport patientAndIncidentReport) throws RemoteException
     {
 
         try
@@ -279,7 +347,7 @@ public class Database implements Database_Interface
             Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
             // Build the Query
-            String exists = "SELECT * FROM Incidentreport WHERE nhsRegNoRef = '" + incidentReport.getNhsRegNoRef() + "'";
+            String exists = "SELECT * FROM Incidentreport WHERE nhsRegNoRef = '" + patientAndIncidentReport.getNhsRegNoRef() + "'";
 
             // Execute the statement
             ResultSet result = statement.executeQuery(exists);
@@ -288,8 +356,8 @@ public class Database implements Database_Interface
             {
                 result.last();
 
-                incidentReport.setIncidentReportNo(result.getInt("reportNo"));
-                incidentReport.setMedCon(result.getString("medCon"));
+                patientAndIncidentReport.setIncidentReportNo(result.getInt("reportNo"));
+                patientAndIncidentReport.setMedCon(result.getString("medCon"));
             }
 
             // Release resources held by the connection.  This also ensures that the INSERT completes
@@ -305,7 +373,7 @@ public class Database implements Database_Interface
         {
             sqlEx(ex);
         }
-        return incidentReport;
+        return patientAndIncidentReport;
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------

@@ -323,9 +323,21 @@ public class HQ_GUI_Layer extends JFrame
 
                 popupBox(result);
 
+
+                Patient patient = appLayer.retrievePatientDetails
+                        (
+                                firstNameTxt.getText(),
+                                surNameTxt.getText(),
+                                ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
+                        );
+
+
+
+
+
                 if (appLayer.sendRescueRequest
                         (
-                                Integer.parseInt(nhsRegNoTxt.getText())
+                                patient.getNhsRegNo()
                         ))
                 {
                     popupBox("Rescue Request Sent");
@@ -334,11 +346,7 @@ public class HQ_GUI_Layer extends JFrame
                 {
                     popupBox("Rescue Request NOT Sent");
                 }
-
-
-
                 resetGUI();
-
             }
         });
 
@@ -402,6 +410,7 @@ public class HQ_GUI_Layer extends JFrame
         scrollPane = new JScrollPane(descriptionTxtArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(400, 315));
+
         bottom.add(scrollPane);
 
         descriptionTxtArea.setText("Please enter the Patients details.\nYou must enter the following fields to check if the Patient is on the database:\n\nFirst Name\nSurname\nDate of Birth\nNHS Reg No (can be blank if unknown)");

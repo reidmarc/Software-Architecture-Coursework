@@ -2,7 +2,7 @@ package Regional_Hospital;
 
 
 
-import Headquarters.IncidentReport;
+import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
 
 import java.rmi.RemoteException;
@@ -39,18 +39,68 @@ public class RH_APP_Layer implements RH_APP_Layer_Interface
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
-    public IncidentReport retrieveIncidentDetails(int nhsRegNo)
+    public PatientAndIncidentReport retrieveIncidentDetails(int nhsRegNo)
     {
-        IncidentReport incidentReport = new IncidentReport(nhsRegNo);
+        PatientAndIncidentReport patientAndIncidentReport = new PatientAndIncidentReport(nhsRegNo);
 
         try
         {
-            return dataLayer.retrieveIncidentDetails(incidentReport);
+            return dataLayer.retrieveIncidentDetails(patientAndIncidentReport);
         }
         catch (RemoteException e)
         {
             e.printStackTrace();
-            return incidentReport;
+            return patientAndIncidentReport;
         }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean sendPatientDetailsToMobile(String firstName, String surName, String dateOfBirth, int nhsRegNoRef, String street, String cityCounty, String postCode, int incidentReportNo, String medCon)
+    {
+        PatientAndIncidentReport patientAndIncidentReport  = new PatientAndIncidentReport (firstName, surName, dateOfBirth, nhsRegNoRef, street, cityCounty, postCode, incidentReportNo, medCon);
+
+        try
+        {
+            return dataLayer.sendPatientDetailsToMobile(patientAndIncidentReport);
+        }
+        catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean sendPatientDetailsToMobile(int incidentReportNo, int nhsRegNo)
+    {
+        PatientAndIncidentReport patientAndIncidentReport  = new PatientAndIncidentReport (incidentReportNo, nhsRegNo);
+
+        try
+        {
+            return dataLayer.sendPatientDetailsToMobile(patientAndIncidentReport);
+        }
+        catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    @Override
+    public boolean sendToMobile(String text)
+    {
+
+        try
+        {
+            return dataLayer.sendToMobile(text);
+        }
+        catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }
