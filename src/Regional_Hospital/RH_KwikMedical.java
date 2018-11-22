@@ -18,7 +18,7 @@ public class RH_KwikMedical
 
             // Creates the GUI layer, passing in the app layer
             RH_GUI_Layer gui = new RH_GUI_Layer(appLayer);
-            //RH_GUI_Layer gui = new RH_GUI_Layer();
+
         }
         catch (Exception ex)
         {

@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.Calendar;
 
 class MP_Connection extends Thread
@@ -14,7 +13,6 @@ class MP_Connection extends Thread
     private DataInputStream in;
 
     private String currentDate;
-
     private Socket clientSocket;
     private JTextField firstNameTxt;
     private JTextField surNameTxt;
@@ -27,9 +25,8 @@ class MP_Connection extends Thread
     private JTextField medConTxt;
     private JTextField currentDateTxt;
     private JTextField startTimeTxt;
-
-
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     public MP_Connection(Socket aClientSocket, JTextField firstNameTxt, JTextField surNameTxt, JTextField dateOfBirthTxt, JTextField nhsRegNoTxt, JTextField streetTxt, JTextField cityCountyTxt, JTextField postcodeTxt, JTextField reportNoTxt, JTextField medConTxt, JTextField currentDateTxt, JTextField startTimeTxt)
     {
         try
@@ -60,7 +57,8 @@ class MP_Connection extends Thread
             e.printStackTrace();
         }
     }
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     public void run()
     {
         try

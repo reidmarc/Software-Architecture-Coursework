@@ -11,6 +11,4 @@ public interface RH_APP_Layer_Interface
     PatientAndIncidentReport retrieveIncidentDetails(int nhsRegNo);
 
     boolean sendPatientDetailsToMobile(String firstName, String surName, String dateOfBirth, int nhsRegNoRef, String street, String cityCounty, String postCode, int incidentReportNo, String medCon);
-
-    boolean sendToMobile(String text);
 }

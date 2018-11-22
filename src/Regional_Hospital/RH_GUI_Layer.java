@@ -4,17 +4,12 @@ package Regional_Hospital;
 
 import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class RH_GUI_Layer implements Runnable
 {
@@ -33,16 +28,8 @@ public class RH_GUI_Layer implements Runnable
     private JTextField currentDateTxt;
     private JTextField locationTxt;
     private JTextField actionTakenTxt;
-
-
     private JButton sendDetailsBtn, forwardsBtn, backwardsBtn;
-
-
-
-
     private RH_APP_Layer appLayer;
-
-
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     public RH_GUI_Layer (RH_APP_Layer appLayer)
@@ -56,22 +43,7 @@ public class RH_GUI_Layer implements Runnable
     //------------------------------------------------------------------------------------------------------------------
     public void run()
     {
-        try
-        {
-            int serverPort = 7896;
-            ServerSocket listenSocket = new ServerSocket(serverPort);
-            System.out.println("Server ready");
-
-            while(true)
-            {
-                Socket clientSocket = listenSocket.accept();
-                RH_Connection c = new RH_Connection(clientSocket, nhsRegNoTxt);
-            }
-        }
-        catch(IOException e)
-        {
-            System.out.println("Listen: " + e.getMessage());
-        }
+        appLayer.startServer(nhsRegNoTxt);
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
@@ -102,8 +74,6 @@ public class RH_GUI_Layer implements Runnable
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.toFront();
-
-
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
@@ -112,12 +82,10 @@ public class RH_GUI_Layer implements Runnable
         innerLeftPanel = new JPanel();
         innerLeftPanel.setLayout(new GridLayout(10,2,1,1));
 
-
         JLabel blankLabel1 = new JLabel(" ");
         JLabel blankLabel2 = new JLabel(" ");
         JLabel blankLabel3 = new JLabel(" ");
         JLabel blankLabel4 = new JLabel(" ");
-
 
         JLabel patientDetailsLabel = new JLabel("    Patient Details");
         JLabel firstNameLabel = new JLabel("    First Name:");
@@ -128,8 +96,6 @@ public class RH_GUI_Layer implements Runnable
         JLabel cityCountyLabel = new JLabel("    City / County:");
         JLabel postcodeLabel = new JLabel("    Postcode:");
 
-
-
         firstNameTxt = new JTextField();
         surNameTxt = new JTextField();
         dateOfBirthTxt = new JTextField();
@@ -138,7 +104,6 @@ public class RH_GUI_Layer implements Runnable
         cityCountyTxt = new JTextField();
         postcodeTxt = new JTextField();
         sendDetailsBtn = new JButton("Send Details");
-
 
         firstNameTxt.setEditable(false);
         surNameTxt.setEditable(false);
@@ -203,35 +168,38 @@ public class RH_GUI_Layer implements Runnable
             }
         });
 
-
         sendDetailsBtn.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
-                if (appLayer.sendPatientDetailsToMobile
-                        (
-                                firstNameTxt.getText(),
-                                surNameTxt.getText(),
-                                dateOfBirthTxt.getText(),
-                                Integer.parseInt(nhsRegNoTxt.getText()),
-                                streetTxt.getText(),
-                                cityCountyTxt.getText(),
-                                postcodeTxt.getText(),
-                                Integer.parseInt(reportNoTxt.getText()),
-                                medConTxt.getText()
-                        ))
+                if (!nhsRegNoTxt.getText().equals(""))
                 {
-                    System.out.println("Patient Details sent to mobile\nNow send the incident details");
+                    if (appLayer.sendPatientDetailsToMobile
+                            (
+                                    firstNameTxt.getText(),
+                                    surNameTxt.getText(),
+                                    dateOfBirthTxt.getText(),
+                                    Integer.parseInt(nhsRegNoTxt.getText()),
+                                    streetTxt.getText(),
+                                    cityCountyTxt.getText(),
+                                    postcodeTxt.getText(),
+                                    Integer.parseInt(reportNoTxt.getText()),
+                                    medConTxt.getText()
+                            )) {
+                        System.out.println("Patient Details sent to mobile\nNow send the incident details");
 
+                    } else {
+                        System.out.println("Patient Details NOT sent!!\nGet working!!");
+                    }
+
+                    resetGUI();
+                    popupBox("Patient and Incident details sent to ambulance.");
                 }
                 else
                 {
-                    System.out.println("Patient Details NOT sent!!\nGet working!!");
+                    popupBox("There must be an incident report to send.");
                 }
-
-                resetGUI();
             }
         });
     }
@@ -319,5 +287,11 @@ public class RH_GUI_Layer implements Runnable
     {
         outerPanel = new JPanel();
         outerPanel.setLayout(new GridLayout(1,2));
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    private void popupBox(String result)
+    {
+        JOptionPane.showMessageDialog(null, result, "KwikMedical", JOptionPane.INFORMATION_MESSAGE);
     }
 }

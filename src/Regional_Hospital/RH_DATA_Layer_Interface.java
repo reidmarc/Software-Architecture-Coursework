@@ -2,7 +2,6 @@ package Regional_Hospital;
 
 import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

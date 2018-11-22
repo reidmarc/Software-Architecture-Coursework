@@ -14,10 +14,10 @@ public class Database_Server
             Registry registry = LocateRegistry.createRegistry(1099);
 
             // Instantiate the concrete class
-            Database db = new Database();
+            Database_DATA_Layer db = new Database_DATA_Layer();
 
             // Export the stub using the interface specification
-            Database_Interface stub = (Database_Interface) UnicastRemoteObject.exportObject(db, 0);
+            Database_DATA_Layer_Interface stub = (Database_DATA_Layer_Interface) UnicastRemoteObject.exportObject(db, 0);
 
             //Bind the stub to the name "Account" in the registry
             registry.bind("Database", stub);

@@ -9,7 +9,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     private boolean successful;
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
-
     public HQ_APP_Layer(HQ_DATA_Layer dataLayer)
     {
         this.dataLayer = dataLayer;
@@ -19,7 +18,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
     @Override
     public String addPatient(String firstName, String surName, String dateOfBirth, String street, String cityCounty, String postCode, String medCon)
     {
-
         // Creates the Headquarters.Patient object
         Patient patient = new Patient(firstName, surName, dateOfBirth, street, cityCounty, postCode, medCon);
 
@@ -32,7 +30,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
             remoteEx(ex);
             successful = false;
         }
-
 
         // Either the record was added or not.  Return an appropriate message
         if (successful)
@@ -57,7 +54,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
         {
             remoteEx(ex);
         }
-
 
         return false;
     }
@@ -160,7 +156,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
         // Creates the Patient object
         Patient patient = new Patient(firstName, surName, dateOfBirth);
 
-
         try
         {
             return dataLayer.retrievePatientDetails(patient);
@@ -189,22 +184,6 @@ public class HQ_APP_Layer implements HQ_APP_Layer_Interface
             return null;
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     private void remoteEx(RemoteException ex)

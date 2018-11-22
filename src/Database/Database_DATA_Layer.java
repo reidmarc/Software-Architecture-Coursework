@@ -6,12 +6,9 @@ import Headquarters.Patient;
 import java.rmi.RemoteException;
 import java.sql.*;
 
-public class Database implements Database_Interface
+public class Database_DATA_Layer implements Database_DATA_Layer_Interface
 {
     private Connection conn;
-    //private boolean newPatient = false;
-
-
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     @Override
@@ -38,7 +35,6 @@ public class Database implements Database_Interface
                 patientTableInsert.setString(6, patient.getPostCode());
                 patientTableInsert.executeUpdate();
             }
-
 
             // Create a new SQL statement
             Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -91,7 +87,6 @@ public class Database implements Database_Interface
     @Override
     public boolean updatePatient(Patient patient) throws RemoteException
     {
-
         try
         {
             // Load the driver
@@ -297,9 +292,6 @@ public class Database implements Database_Interface
             // Create a new SQL statement
             Statement statementExist = conn.createStatement();
 
-            // Build the Query
-            //String exists = "SELECT * FROM PatientRecord WHERE firstName = '" + patient.getFirstName() + "' AND surName = '" + patient.getSurName() + "' AND dateOfBirth = '" + patient.getDateOfBirth() + "'";
-
             query = patientQueryCheck(patient);
 
             // Execute the statement
@@ -334,7 +326,6 @@ public class Database implements Database_Interface
     @Override
     public PatientAndIncidentReport retrieveIncidentDetails(PatientAndIncidentReport patientAndIncidentReport) throws RemoteException
     {
-
         try
         {
             // Load the driver
@@ -362,8 +353,6 @@ public class Database implements Database_Interface
 
             // Release resources held by the connection.  This also ensures that the INSERT completes
             conn.close();
-
-
         }
         catch (ClassNotFoundException ex)
         {

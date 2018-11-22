@@ -1,10 +1,9 @@
 package Regional_Hospital;
 
 
-import Database.Database_Interface;
+import Database.Database_DATA_Layer_Interface;
 import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
-
 import java.io.*;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -31,7 +30,7 @@ public class RH_DATA_Layer implements RH_DATA_Layer_Interface
             Registry registry = LocateRegistry.getRegistry(1099);
 
             // Look up the remote object
-            Database_Interface stub = (Database_Interface) registry.lookup("Database");
+            Database_DATA_Layer_Interface stub = (Database_DATA_Layer_Interface) registry.lookup("Database");
 
             // Returns boolean value, whether the data was inserted to the db or not
             return stub.retrievePatientDetails(patient);
@@ -54,7 +53,7 @@ public class RH_DATA_Layer implements RH_DATA_Layer_Interface
             Registry registry = LocateRegistry.getRegistry(1099);
 
             // Look up the remote object
-            Database_Interface stub = (Database_Interface) registry.lookup("Database");
+            Database_DATA_Layer_Interface stub = (Database_DATA_Layer_Interface) registry.lookup("Database");
 
             // Returns boolean value, whether the data was inserted to the db or not
             return stub.retrieveIncidentDetails(patientAndIncidentReport);
@@ -80,7 +79,6 @@ public class RH_DATA_Layer implements RH_DATA_Layer_Interface
 
             DataInputStream in = new DataInputStream(s.getInputStream());
             DataOutputStream out = new DataOutputStream(s.getOutputStream());
-
 
             String firstName = patientAndIncidentReport.getFirstName();
             String surName = patientAndIncidentReport.getSurName();
@@ -123,11 +121,11 @@ public class RH_DATA_Layer implements RH_DATA_Layer_Interface
             return false;
         }
     }
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean sendToMobile(String text) throws RemoteException
     {
-
         Socket s = null;
 
         try
@@ -170,8 +168,4 @@ public class RH_DATA_Layer implements RH_DATA_Layer_Interface
             return false;
         }
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------------
-
-
 }

@@ -4,7 +4,10 @@ package Regional_Hospital;
 
 import Headquarters.PatientAndIncidentReport;
 import Headquarters.Patient;
-
+import javax.swing.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.RemoteException;
 
 
@@ -12,7 +15,6 @@ public class RH_APP_Layer implements RH_APP_Layer_Interface
 {
     // The underlying data layer this application layer sits upon
     private RH_DATA_Layer dataLayer;
-
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     public RH_APP_Layer(RH_DATA_Layer dataLayer)
@@ -70,8 +72,8 @@ public class RH_APP_Layer implements RH_APP_Layer_Interface
             return false;
         }
     }
-
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     public boolean sendPatientDetailsToMobile(int incidentReportNo, int nhsRegNo)
     {
         PatientAndIncidentReport patientAndIncidentReport  = new PatientAndIncidentReport (incidentReportNo, nhsRegNo);
@@ -86,21 +88,25 @@ public class RH_APP_Layer implements RH_APP_Layer_Interface
             return false;
         }
     }
-
-
-    @Override
-    public boolean sendToMobile(String text)
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    public void startServer(JTextField nhsRegNoTxt)
     {
-
         try
         {
-            return dataLayer.sendToMobile(text);
-        }
-        catch (RemoteException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
+            int serverPort = 7896;
+            ServerSocket listenSocket = new ServerSocket(serverPort);
+            System.out.println("Server ready");
 
+            while(true)
+            {
+                Socket clientSocket = listenSocket.accept();
+                RH_Connection c = new RH_Connection(clientSocket, nhsRegNoTxt);
+            }
+        }
+        catch(IOException e)
+        {
+            System.out.println("Listen: " + e.getMessage());
+        }
     }
 }

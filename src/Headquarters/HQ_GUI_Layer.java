@@ -1,8 +1,5 @@
 package Headquarters;
 
-// ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
-
-
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
@@ -12,9 +9,10 @@ import java.awt.event.ActionListener;
 
 public class HQ_GUI_Layer extends JFrame
 {
-    private JPanel left, right, top, middle, bottom;
+    private JPanel left, right, top, bottom;
     private JScrollPane scrollPane;
 
+    /*
     private String firstName;
     private String surName;
     private String dateOfBirth;
@@ -23,10 +21,10 @@ public class HQ_GUI_Layer extends JFrame
     private String cityCounty;
     private String postCode;
     private String medCon;
+    */
 
     private JTextField firstNameTxt;
     private JTextField surNameTxt;
-    //private JTextField dateOfBirthTxt;
     private JTextField nhsRegNoTxt;
     private JTextField streetTxt;
     private JTextField cityCountyTxt;
@@ -36,10 +34,7 @@ public class HQ_GUI_Layer extends JFrame
     private JTextArea descriptionTxtArea;
     private JDateChooser dateOfBirthPicker;
 
-
-
     private boolean result = false;
-    private boolean addPatient = false;
     private Patient patient = new Patient();
     private Validation validation;
 
@@ -162,9 +157,6 @@ public class HQ_GUI_Layer extends JFrame
                         // IF the Patients nhsRegNo has been entered
                         if (!nhsRegNoTxt.getText().equals(""))
                         {
-                            // nhsRegNo NEEDS VALIDATED TO BE A NUMBER!!!!
-
-
                             // Takes the string value for nhsRegNo converts it to an int then passes it to the app layer
                             result = appLayer.checkForPatient(Integer.parseInt(nhsRegNoTxt.getText()));
 
@@ -331,10 +323,6 @@ public class HQ_GUI_Layer extends JFrame
                                 ((JTextField)dateOfBirthPicker.getDateEditor().getUiComponent()).getText()
                         );
 
-
-
-
-
                 if (appLayer.sendRescueRequest
                         (
                                 patient.getNhsRegNo()
@@ -349,7 +337,6 @@ public class HQ_GUI_Layer extends JFrame
                 resetGUI();
             }
         });
-
 
 
         updateBtn.addActionListener(new ActionListener()
@@ -387,11 +374,7 @@ public class HQ_GUI_Layer extends JFrame
                     popupBox("Rescue Request NOT Sent");
                 }
 
-
-
-
                 resetGUI();
-
             }
         });
     }

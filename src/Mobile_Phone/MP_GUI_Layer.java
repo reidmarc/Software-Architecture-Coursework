@@ -1,16 +1,13 @@
 package Mobile_Phone;
 
+import Headquarters.Validation;
+
 import javax.swing.*;
 
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.time.Duration;
-import java.time.LocalTime;
 
 public class MP_GUI_Layer implements Runnable
 {
@@ -31,14 +28,10 @@ public class MP_GUI_Layer implements Runnable
     private JTextField actionTakenTxt;
     private JTextField startTimeTxt;
 
-
-
-
     private JButton sendDetailsBtn;
+    private Validation validation;
 
     private MP_APP_Layer appLayer;
-
-
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     public MP_GUI_Layer (MP_APP_Layer appLayer)
@@ -49,28 +42,13 @@ public class MP_GUI_Layer implements Runnable
     }
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
-
     @Override
     public void run()
     {
-        try
-        {
-            int serverPort = 7898;
-            ServerSocket listenSocket = new ServerSocket(serverPort);
-            System.out.println("Server ready");
-
-            while(true)
-            {
-                Socket clientSocket = listenSocket.accept();
-                MP_Connection c = new MP_Connection(clientSocket, firstNameTxt, surNameTxt, dateOfBirthTxt, nhsRegNoTxt, streetTxt, cityCountyTxt, postcodeTxt, reportNoTxt, medConTxt, currentDateTxt, startTimeTxt);
-            }
-        }
-        catch(IOException e)
-        {
-            System.out.println("Listen: " + e.getMessage());
-        }
+        appLayer.startServer(firstNameTxt, surNameTxt, dateOfBirthTxt, nhsRegNoTxt, streetTxt, cityCountyTxt, postcodeTxt, reportNoTxt, medConTxt, currentDateTxt, startTimeTxt);
     }
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     private void createWindow()
     {
         UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("Arial", Font.PLAIN, 12));
@@ -96,18 +74,16 @@ public class MP_GUI_Layer implements Runnable
         frame.setLocationRelativeTo(null);
         frame.toFront();
     }
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     private void innerLeftPanelContent()
     {
         innerLeftPanel = new JPanel();
         innerLeftPanel.setLayout(new GridLayout(10,2,1,1));
 
-
         JLabel blankLabel1 = new JLabel(" ");
         JLabel blankLabel2 = new JLabel(" ");
         JLabel blankLabel3 = new JLabel(" ");
-
-
 
         JLabel patientDetailsLabel = new JLabel("    Patient Details");
         JLabel firstNameLabel = new JLabel("    First Name:");
@@ -117,8 +93,6 @@ public class MP_GUI_Layer implements Runnable
         JLabel streetLabel = new JLabel("    Street:");
         JLabel cityCountyLabel = new JLabel("    City / County:");
         JLabel postcodeLabel = new JLabel("    Postcode:");
-
-
 
         firstNameTxt = new JTextField();
         surNameTxt = new JTextField();
@@ -130,7 +104,6 @@ public class MP_GUI_Layer implements Runnable
         startTimeTxt = new JTextField();
         sendDetailsBtn = new JButton("Send Details");
 
-
         firstNameTxt.setEditable(false);
         surNameTxt.setEditable(false);
         dateOfBirthTxt.setEditable(false);
@@ -139,7 +112,6 @@ public class MP_GUI_Layer implements Runnable
         cityCountyTxt.setEditable(false);
         postcodeTxt.setEditable(false);
         startTimeTxt.setVisible(false);
-
 
         innerLeftPanel.add(patientDetailsLabel);
         innerLeftPanel.add(blankLabel1);
@@ -164,52 +136,70 @@ public class MP_GUI_Layer implements Runnable
         innerLeftPanel.add(blankLabel3);
 
 
-
         sendDetailsBtn.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                long startTime = Long.parseLong(startTimeTxt.getText());
 
-                Timing timing = new Timing();
-                long duration = timing.endTiming(startTime);
+                validation = new Validation();
 
-                System.out.println("Duration: " + duration + " seconds");
-
-
-
-                // WHAT DOES THE BUTTON DO?????
-
-                boolean isUpdated = appLayer.patientAndIncidentReportUpdated
-                        (
-                            firstNameTxt.getText(),
-                            surNameTxt.getText(),
-                            dateOfBirthTxt.getText(),
-                            Integer.parseInt(nhsRegNoTxt.getText()),
-                            streetTxt.getText(),
-                            cityCountyTxt.getText(),
-                            postcodeTxt.getText(),
-                            Integer.parseInt(reportNoTxt.getText()),
-                            medConTxt.getText(),
-                            responderTxt.getText(),
-                            diagnosisTxt.getText(),
-                            currentDateTxt.getText(),
-                            locationTxt.getText(),
-                            actionTakenTxt.getText(),
-                            duration
-                        );
-
-                if (isUpdated)
+                if (
+                        validation.isItOnlyNumbersAndCharacters(responderTxt.getText()) &&
+                        validation.isItOnlyNumbersAndCharacters(diagnosisTxt.getText()) &&
+                        validation.isItOnlyNumbersAndCharacters(locationTxt.getText()) &&
+                        validation.isItOnlyNumbersAndCharacters(actionTakenTxt.getText()) &&
+                        !responderTxt.getText().equals("") &&
+                        !diagnosisTxt.getText().equals("") &&
+                        !locationTxt.getText().equals("") &&
+                        !actionTakenTxt.getText().equals("")
+                )
                 {
-                    System.out.println("Success");
+
+
+                    long startTime = Long.parseLong(startTimeTxt.getText());
+
+                    Timing timing = new Timing();
+                    long duration = timing.endTiming(startTime);
+
+                    System.out.println("Duration: " + duration + " seconds");
+
+                    // WHAT DOES THE BUTTON DO?????
+
+                    boolean isUpdated = appLayer.patientAndIncidentReportUpdated
+                            (
+                                    firstNameTxt.getText(),
+                                    surNameTxt.getText(),
+                                    dateOfBirthTxt.getText(),
+                                    Integer.parseInt(nhsRegNoTxt.getText()),
+                                    streetTxt.getText(),
+                                    cityCountyTxt.getText(),
+                                    postcodeTxt.getText(),
+                                    Integer.parseInt(reportNoTxt.getText()),
+                                    medConTxt.getText(),
+                                    responderTxt.getText(),
+                                    diagnosisTxt.getText(),
+                                    currentDateTxt.getText(),
+                                    locationTxt.getText(),
+                                    actionTakenTxt.getText(),
+                                    duration
+                            );
+
+                    if (isUpdated)
+                    {
+                        popupBox("Incident report sent to the database.");
+                    }
+                    else
+                    {
+                        popupBox("Incident has not been report sent to the database.");
+                    }
+
+                    resetGUI();
                 }
                 else
                 {
-                    System.out.println("BAAAAAAAD");
+                    popupBox("Please check the values you have entered and try again.");
                 }
-
-                resetGUI();
             }
         });
     }
@@ -233,7 +223,8 @@ public class MP_GUI_Layer implements Runnable
         startTimeTxt.setText("");
 
     }
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     private void innerRightPanelContent()
     {
         innerRightPanel = new JPanel();
@@ -252,7 +243,6 @@ public class MP_GUI_Layer implements Runnable
         JLabel locationLabel = new JLabel("    Location: ");
         JLabel actionTakenLabel = new JLabel("    Action Taken: ");
 
-
         reportNoTxt = new JTextField();
         medConTxt = new JTextField();
         responderTxt = new JTextField();
@@ -261,11 +251,9 @@ public class MP_GUI_Layer implements Runnable
         locationTxt = new JTextField();
         actionTakenTxt = new JTextField();
 
-
         reportNoTxt.setEditable(false);
         medConTxt.setEditable(false);
         currentDateTxt.setEditable(false);
-
 
         innerRightPanel.add(incidentDetailsLabels);
         innerRightPanel.add(blankLabel1);
@@ -285,15 +273,18 @@ public class MP_GUI_Layer implements Runnable
         innerRightPanel.add(actionTakenTxt);
         innerRightPanel.add(blankLabel2);
         innerRightPanel.add(blankLabel3);
-
-
-
     }
-
-
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     private void outerPanelContent()
     {
         outerPanel = new JPanel();
         outerPanel.setLayout(new GridLayout(1,2));
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    private void popupBox(String result)
+    {
+        JOptionPane.showMessageDialog(null, result, "KwikMedical", JOptionPane.INFORMATION_MESSAGE);
     }
 }

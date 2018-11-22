@@ -17,7 +17,6 @@ public class MP_KwikMedical
 
             // Creates the GUI layer, passing in the app layer
             MP_GUI_Layer gui = new MP_GUI_Layer(appLayer);
-
         }
         catch (Exception ex)
         {
@@ -25,8 +24,4 @@ public class MP_KwikMedical
             ex.printStackTrace();
         }
     }
-
-
-
-
 }
